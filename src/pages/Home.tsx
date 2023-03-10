@@ -1,13 +1,14 @@
 import React, { useLayoutEffect, useState } from "react";
 import { IResponse } from "../interfaces/IResponse";
-import { List, Typography, Button, Col, Row, Space } from "antd";
+import { List, Typography, Button, Col, Row } from "antd";
 import { getAllData } from "../services/api";
 import Loading from "../components/Loading";
 const imgErr: string = `https://www.batecfrance.fr/wp-content/themes/emcwil/images/PF-image.jpg`;
 
 const Home: React.FC = () => {
   const [data, setData] = useState<IResponse | null>(null);
-  const [perPage, setPerpage] = useState<number>(10);
+  const [perPage] = useState<number>(10);
+  const [loadNext, setLoadNext] = useState<boolean>(false);
 
   const getData = async () => {
     const dataRes = await getAllData();
@@ -28,6 +29,7 @@ const Home: React.FC = () => {
 
   return (
     <List
+      loading={loadNext}
       itemLayout="horizontal"
       size="small"
       dataSource={data.articles}
@@ -113,6 +115,12 @@ const Home: React.FC = () => {
         );
       }}
       pagination={{
+        onChange(page, pageSize) {
+          setLoadNext(true);
+          setTimeout(() => {
+            setLoadNext(false);
+          }, 500);
+        },
         pageSize: perPage,
         showSizeChanger: false,
       }}
